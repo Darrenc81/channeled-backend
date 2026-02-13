@@ -3,8 +3,7 @@ import Foundation
 
 /// Show type enum for TMDB content
 enum TMDBShowType: String, Codable {
-    case movie
-        case series
+    case movie, series
 }
 
 /// A TMDB show model representing a movie or TV series from The Movie Database API
