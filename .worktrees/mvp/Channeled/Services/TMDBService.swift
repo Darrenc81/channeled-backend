@@ -9,11 +9,11 @@ actor TMDBService {
     private let session: URLSession
 
     private init() {
-        // Use environment variable or default to localhost for development
+        // Use environment variable or Railway backend for development
         if let apiURL = ProcessInfo.processInfo.environment["CHANNELED_API_URL"] {
             self.baseURL = apiURL
         } else {
-            self.baseURL = "http://localhost:3000"
+            self.baseURL = "https://channeled-backend-production.up.railway.app"
         }
 
         let configuration = URLSessionConfiguration.default
