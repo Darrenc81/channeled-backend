@@ -1,0 +1,8 @@
+error: unrecognized subcommand 'token'
+
+  tip: a similar subcommand exists: 'open'
+
+Usage: railway [COMMAND]
+
+For more information, try '--help'.
+

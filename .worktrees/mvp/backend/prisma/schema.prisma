@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Household {
+  id            String         @id @default(cuid())
+  name          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  members       User[]
+  scheduledSlots ScheduledSlot[]
+}
+
+model User {
+  id             String         @id @default(cuid())
+  name           String
+  email          String?        @unique
+  appleUserId    String?        @unique
+  householdId    String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  household      Household      @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  watchlist      Show[]
+  viewingWindows ViewingWindow[]
+  viewingEvents  ViewingEvent[]
+
+  @@index([householdId])
+  @@index([appleUserId])
+}
+
+model Show {
+  id              String         @id @default(cuid())
+  tmdbId          Int            @unique
+  type            ShowType
+  title           String
+  overview        String?
+  artworkURL      String?
+  backdropURL     String?
+  genres          String[]
+  runtime         Int            @default(0)
+  contentRating   String?
+  releaseDate     DateTime?
+  isBingeable     Boolean        @default(false)
+  partnerApproved Boolean        @default(false)
+  moodTags        String[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  watchlistedBy   User[]         @relation("UserWatchlist")
+  scheduledSlots  ScheduledSlot[]
+
+  @@index([tmdbId])
+}
+
+model ScheduledSlot {
+  id              String   @id @default(cuid())
+  householdId     String
+  startTime       DateTime
+  duration        Int      // minutes
+  type            SlotType
+  showId          String?
+  episodeCount    Int      @default(1)
+  familyFriendly  Boolean  @default(false)
+  partnerMustLike Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  household       Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  show            Show?     @relation(fields: [showId], references: [id], onDelete: SetNull)
+
+  @@index([householdId])
+  @@index([showId])
+  @@index([startTime])
+}
+
+model ViewingWindow {
+  id        String     @id @default(cuid())
+  userId    String
+  dayOfWeek Int        // 0 = Sunday, 6 = Saturday
+  startTime String     // HH:mm format
+  endTime   String     // HH:mm format
+  type      WindowType
+  label     String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ViewingEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  showId      String
+  startTime   DateTime
+  endTime     DateTime?
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([showId])
+  @@index([startTime])
+}
+
+enum ShowType {
+  movie
+  series
+}
+
+enum SlotType {
+  booked
+  recurring
+  generated
+  placeholder
+}
+
+enum WindowType {
+  shared
+  solo
+}
