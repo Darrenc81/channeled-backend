@@ -35,7 +35,7 @@ export function createAuthRoutes() {
   return router;
 }
 
-async function findOrCreateUser(appleUserId: string) {
+async function findOrCreateUser(_appleUserId: string) {
   // Implementation with Prisma
   return { id: 'user-id', name: 'User Name' };
 }
