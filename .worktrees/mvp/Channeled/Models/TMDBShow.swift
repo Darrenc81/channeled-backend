@@ -25,8 +25,8 @@ struct TMDBShow: Codable, Identifiable, Hashable {
         case type
         case title
         case overview
-        case artworkURL = "artworkUrl"
-        case backdropURL = "backdropUrl"
+        case artworkURL = "artworkURL"
+        case backdropURL = "backdropURL"
         case genres
         case runtime
         case contentRating = "contentRating"

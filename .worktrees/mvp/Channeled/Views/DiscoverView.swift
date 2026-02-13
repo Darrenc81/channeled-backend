@@ -78,7 +78,7 @@ struct DiscoverView: View {
 
     private func showPoster(for show: TMDBShow) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            AsyncImage(url: URL(string: show.artworkURL ?? "")) { phase in
+            AsyncImage(url: show.artworkURL.map { URL(string: $0) } ?? nil) { phase in
                 switch phase {
                 case .empty:
                     RoundedRectangle(cornerRadius: 8)
